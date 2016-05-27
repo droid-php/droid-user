@@ -5,6 +5,7 @@ namespace Droid\Plugin\User;
 use Symfony\Component\Process\ProcessBuilder;
 
 use Droid\Plugin\User\Command\UserCreateCommand;
+use Droid\Plugin\User\Command\UserEnableKeyAuthCommand;
 
 class DroidPlugin
 {
@@ -17,6 +18,7 @@ class DroidPlugin
     {
         return array(
             new UserCreateCommand(new ProcessBuilder),
+            new UserEnableKeyAuthCommand,
         );
     }
 }
