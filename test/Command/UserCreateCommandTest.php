@@ -79,7 +79,7 @@ class UserCreateCommandTest extends \PHPUnit_Framework_TestCase
             ->method('setArguments')
             ->withConsecutive(
                 array(array('id', 'some_username')),
-                array(array('adduser', 'some_username'))
+                array(array('sudo', 'adduser', 'some_username'))
             )
             ->willReturnSelf()
         ;
@@ -166,7 +166,7 @@ class UserCreateCommandTest extends \PHPUnit_Framework_TestCase
             ->method('setArguments')
             ->withConsecutive(
                 array(array('id', 'some_username')),
-                array(array('adduser', 'some_username'))
+                array(array('sudo', 'adduser', 'some_username'))
             )
             ->willReturnSelf()
         ;

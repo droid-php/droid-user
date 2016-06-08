@@ -34,6 +34,15 @@ class UserCreateCommand extends Command
                 InputArgument::REQUIRED,
                 'Create a user with this user name.'
             )
+            ->setHelp(
+                'This command should be run by a user allowed to execute `sudo adduser`'
+                . "\n"
+                . 'without being required to input a password. Somthing like the following'
+                . "\n"
+                . 'entry in a sudoers file should work:-'
+                . "\n"
+                . "    my_user\tALL = NOPASSWD: /usr/sbin/adduser"
+            )
         ;
         $this->configureCheckMode();
     }
@@ -104,7 +113,7 @@ class UserCreateCommand extends Command
         if ($this->checkMode()) {
             return;
         }
-        $p = $this->getProcess(array('adduser', $username));
+        $p = $this->getProcess(array('sudo', 'adduser', $username));
         if ($p->run()) {
             throw new RuntimeException(
                 trim($p->getErrorOutput()),
