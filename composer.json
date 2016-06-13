@@ -27,5 +27,8 @@
             "Droid\\Plugin\\User\\": "src/"
         }
     },
+    "bin": [
+        "bin/droid-user"
+    ],
     "license": "MIT"
 }
