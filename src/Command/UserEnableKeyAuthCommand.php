@@ -197,6 +197,12 @@ class UserEnableKeyAuthCommand extends Command
         if (empty($keyData)) {
             return null;
         }
+        if (substr($keyData, 0, 5) === 'data:') {
+            $keyData = file_get_contents($keyData);
+            if ($keyData === false) {
+                return null;
+            }
+        }
         return explode("\n", $keyData);
     }
 

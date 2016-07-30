@@ -306,4 +306,73 @@ class UserEnableKeyAuthCommandTest extends \PHPUnit_Framework_TestCase
             $this->tester->getDisplay()
         );
     }
+
+    public function testCommandAcceptsASinglePubkeyAsADataUri()
+    {
+        vfsStream::create(array('some_username' => array('.ssh' => array())));
+        $sshDir = $this->vfs->getChild('some_username')->getChild('.ssh');
+        vfsStream::newFile('authorized_keys')
+            ->at($sshDir)
+            ->setContent('ssh-rsa some_key_material and a comment')
+        ;
+
+        $this->tester->execute(array(
+            'command' => $this->app->find('user:enable-key-auth')->getName(),
+            'homedir' => vfsStream::url('home/some_username'),
+            'pubkey' => 'data:application/octet-stream;base64,c3NoLXJzYSBzb21lX290aGVyX2tleV9tYXRlcmlhbCBhbmQgYSBjb21tZW50Cg=='
+        ));
+
+        $this->assertSame(
+            implode(
+                "\n",
+                array(
+                    'ssh-rsa some_key_material and a comment',
+                    'ssh-rsa some_other_key_material and a comment',
+                    '',
+                )
+            ),
+            $sshDir->getChild('authorized_keys')->getContent()
+        );
+        $this->assertRegExp(
+            '/^I have successfully enabled auth for 1 key./',
+            $this->tester->getDisplay()
+        );
+    }
+
+    public function testCommandAcceptsMultiplePubkeysAsADataUri()
+    {
+        vfsStream::create(array('some_username' => array('.ssh' => array())));
+        $sshDir = $this->vfs->getChild('some_username')->getChild('.ssh');
+        vfsStream::newFile('authorized_keys')
+            ->at($sshDir)
+            ->setContent('ssh-rsa some_key_material and a comment')
+        ;
+
+        $this->tester->execute(array(
+            'command' => $this->app->find('user:enable-key-auth')->getName(),
+            'homedir' => vfsStream::url('home/some_username'),
+            'pubkey' => 'data:application/octet-stream;base64,c3NoLXJzYSBzb21lX2tleV9tYXRlcmlhbCBhbmQgYSBjb21tZW50CnNzaC1yc2Egc29tZV9vdGhlcl9rZXlfbWF0ZXJpYWwgYW5kIGEgY29tbWVudApzc2gtZWQyMjE5IGV2ZW5fbW9yZV9rZXlfbWF0ZXJpYWwgYW5kIGEgY29tbWVudAo='
+        ));
+
+        $this->assertSame(
+            implode(
+                "\n",
+                array(
+                    'ssh-rsa some_key_material and a comment',
+                    'ssh-rsa some_other_key_material and a comment',
+                    'ssh-ed2219 even_more_key_material and a comment',
+                    '',
+                )
+            ),
+            $sshDir->getChild('authorized_keys')->getContent()
+        );
+        $this->assertRegExp(
+            '/^I will enable just 2 of the 3 supplied public keys because 1 is already enabled./',
+            $this->tester->getDisplay()
+        );
+        $this->assertRegExp(
+            '/I have successfully enabled auth for 2 keys./',
+            $this->tester->getDisplay()
+        );
+    }
 }
