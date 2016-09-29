@@ -25,7 +25,7 @@ class UserCreateCommandTest extends \PHPUnit_Framework_TestCase
         ;
         $this->processBuilder = $this
             ->getMockBuilder(ProcessBuilder::class)
-            ->setMethods(array('setArguments', 'getProcess'))
+            ->setMethods(array('setArguments', 'setTimeout', 'getProcess'))
             ->getMock()
         ;
 
@@ -44,6 +44,12 @@ class UserCreateCommandTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('setArguments')
             ->with(array('id', 'some_username'))
+            ->willReturnSelf()
+        ;
+        $this->processBuilder
+            ->expects($this->once())
+            ->method('setTimeout')
+            ->with($this->equalTo(0.0))
             ->willReturnSelf()
         ;
         $this->processBuilder
@@ -81,6 +87,12 @@ class UserCreateCommandTest extends \PHPUnit_Framework_TestCase
                 array(array('id', 'some_username')),
                 array(array('sudo', 'adduser', 'some_username'))
             )
+            ->willReturnSelf()
+        ;
+        $this->processBuilder
+            ->expects($this->exactly(2))
+            ->method('setTimeout')
+            ->with($this->equalTo(0.0))
             ->willReturnSelf()
         ;
         $this->processBuilder
@@ -129,6 +141,12 @@ class UserCreateCommandTest extends \PHPUnit_Framework_TestCase
         ;
         $this->processBuilder
             ->expects($this->once())
+            ->method('setTimeout')
+            ->with($this->equalTo(0.0))
+            ->willReturnSelf()
+        ;
+        $this->processBuilder
+            ->expects($this->once())
             ->method('getProcess')
             ->willReturn($this->process)
         ;
@@ -168,6 +186,12 @@ class UserCreateCommandTest extends \PHPUnit_Framework_TestCase
                 array(array('id', 'some_username')),
                 array(array('sudo', 'adduser', 'some_username'))
             )
+            ->willReturnSelf()
+        ;
+        $this->processBuilder
+            ->expects($this->exactly(2))
+            ->method('setTimeout')
+            ->with($this->equalTo(0.0))
             ->willReturnSelf()
         ;
         $this->processBuilder
